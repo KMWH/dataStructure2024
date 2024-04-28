@@ -1,3 +1,5 @@
+// 202112304 ê¹€ì›í˜¸
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -63,7 +65,7 @@ int main()
 		head = insert_first(head, i);
 		print_ListNode(head);
 	}
-	printf("¸®½ºÆ®¿¡¼­ %dÀ» Ã£¾Ò½À´Ï´Ù.", search_ListNode(head, 30)->data);
+	printf("ë¦¬ìŠ¤íŠ¸ì—ì„œ %dì„ ì°¾ì•˜ìŠµë‹ˆë‹¤.", search_ListNode(head, 30)->data);
 
 	return 0;
 }
