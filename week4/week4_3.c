@@ -1,3 +1,5 @@
+// 202112304 김원호
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
