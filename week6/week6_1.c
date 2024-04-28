@@ -24,7 +24,7 @@ int is_empty(StackType* s) {
 
 void push(StackType* s, element item) {
 	if (is_full(s)) {
-		fprintf(stderr, "½ºÅÃ overflow\n");
+		fprintf(stderr, "스택 overflow\n");
 		return;
 	}
 	else s->data[++(s->top)] = item;
@@ -32,7 +32,7 @@ void push(StackType* s, element item) {
 
 element pop(StackType* s) {
 	if (is_empty(s)) {
-		fprintf(stderr, "½ºÅÃ underflow\n");
+		fprintf(stderr, "스택 underflow\n");
 		exit(1);
 	}
 	else {
