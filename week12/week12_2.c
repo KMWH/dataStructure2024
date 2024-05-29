@@ -1,66 +1,68 @@
-// 202112304 ±è¿øÈ£
+// 202112304 ê¹€ì›í˜¸
 
 #define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
 #include <stdlib.h>
-
 #define MAX_counter_info 200
-
-struct customer_info {
+typedef struct customer_info {
     int use_time;
     int cost;
-};
+} customer_info;
 
-struct counter_info {
+typedef struct counter_info {
     int end_time;
-    int number;
-};
+    int counter_idx;
+} counter_info;
 
 typedef struct {
     counter_info heap[MAX_counter_info];
     int heap_size;
 } HeapType;
 
-// »ı¼º ÇÔ¼ö
+// ìƒì„± í•¨ìˆ˜
 HeapType* create() {
     return (HeapType*)malloc(sizeof(HeapType));
 }
-// ÃÊ±âÈ­ ÇÔ¼ö
+// ì´ˆê¸°í™” í•¨ìˆ˜
 void init(HeapType* h) {
     h->heap_size = 0;
 }
-
-// ÇöÀç ¿ä¼ÒÀÇ °³¼ö°¡ heap_sizeÀÎ Èü h¿¡ itemÀ» »ğÀÔÇÑ´Ù.
+// í˜„ì¬ ìš”ì†Œì˜ ê°œìˆ˜ê°€ heap_sizeì¸ í™ hì— itemì„ ì‚½ì…í•œë‹¤.
 void push_min_heap(HeapType* h, counter_info item) {
     int i;
     i = ++(h->heap_size);
-
     // upheap
-    //Æ®¸®¸¦ °Å½½·¯ ¿Ã¶ó°¡¸é¼­ ºÎ¸ğ ³ëµå¿Í ºñ±³ÇÏ´Â °úÁ¤
-    while ((i != 1) && (item.end_time < h->heap[i / 2].end_time)) {// ÃÖ¼ÒÈüÀ¸·Î ¹Ù²Ü ¶§ ºÎµîÈ£ µÚÁı±â 
+    //íŠ¸ë¦¬ë¥¼ ê±°ìŠ¬ëŸ¬ ì˜¬ë¼ê°€ë©´ì„œ ë¶€ëª¨ ë…¸ë“œì™€ ë¹„êµí•˜ëŠ” ê³¼ì •
+    while ((i != 1) && (item.end_time < h->heap[i / 2].end_time
+        || (item.end_time == h->heap[i / 2].end_time && item.counter_idx < h->heap[i / 2].counter_idx))) {
+        // ë¹„êµ ì‹œ keyê°€ ê°™ìœ¼ë©´ counter_idxë¥¼ ê¸°ì¤€ìœ¼ë¡œ ì •ë ¬
         h->heap[i] = h->heap[i / 2];
         i /= 2;
     }
-    h->heap[i] = item;   // »õ·Î¿î ³ëµå¸¦ »ğÀÔ
+    h->heap[i] = item;    // ìƒˆë¡œìš´ ë…¸ë“œë¥¼ ì‚½ì…
 }
 
-// »èÁ¦ ÇÔ¼ö
+// ì‚­ì œ í•¨ìˆ˜
 counter_info pop_min_heap(HeapType* h) {
     int parent, child;
     counter_info item, temp;
 
     item = h->heap[1];
-    temp = h->heap[(h->heap_size)--];
-    parent = 1;
+    temp = h->heap[(h->heap_size)--];  parent = 1;
     child = 2;
     // downheap
     while (child <= h->heap_size) {
-        // ÇöÀç ³ëµåÀÇ ÀÚ½Ä³ëµå Áß ´õ ÀÛÀº ÀÚ½Ä³ëµå¸¦ Ã£´Â´Ù.
+        // í˜„ì¬ ë…¸ë“œì˜ ìì‹ë…¸ë“œ ì¤‘ ë” í° ìì‹ë…¸ë“œë¥¼ ì°¾ëŠ”ë‹¤.  
         if ((child < h->heap_size) &&
-            (h->heap[child].end_time) > h->heap[child + 1].end_time)
+            (h->heap[child].end_time > h->heap[child + 1].end_time
+                || (h->heap[child].end_time == h->heap[child + 1].end_time && h->heap[child].counter_idx > h->heap[child + 1].counter_idx)))
+            // ë¹„êµ ì‹œ keyê°€ ê°™ìœ¼ë©´ counter_idxë¥¼ ê¸°ì¤€ìœ¼ë¡œ ì •ë ¬
             child++;
-        if (temp.end_time <= h->heap[child].end_time) break;
-        // ÇÑ ´Ü°è ¾Æ·¡·Î ÀÌµ¿
+        if (temp.end_time < h->heap[child].end_time ||
+            (temp.end_time == h->heap[child].end_time && temp.counter_idx <= h->heap[child].counter_idx)) {
+            // ë¹„êµ ì‹œ keyê°€ ê°™ìœ¼ë©´ counter_idxë¥¼ ê¸°ì¤€ìœ¼ë¡œ ì •ë ¬
+            break;
+        }
         h->heap[parent] = h->heap[child];
         parent = child;
         child *= 2;
@@ -70,27 +72,27 @@ counter_info pop_min_heap(HeapType* h) {
 }
 
 int main() {
-    int number_of_counter, number_of_customer;
-    scanf("%d %d", &number_of_counter, &number_of_customer);
+    int counter_idx_of_counter, counter_idx_of_customer;
+    scanf("%d %d", &counter_idx_of_counter, &counter_idx_of_customer);
 
-    counter_info* counter_list = (counter_info*)malloc((number_of_counter + 1) * sizeof(counter_info));
-    for (int counter = 1; counter <= number_of_counter; counter++) {
-        counter_list[counter].number = counter;
+    counter_info* counter_list = (counter_info*)malloc((counter_idx_of_counter + 1) * sizeof(counter_info));
+    for (int counter = 1; counter <= counter_idx_of_counter; counter++) {
+        counter_list[counter].counter_idx = counter;
     }
 
-    customer_info* customer_list = (customer_info*)malloc((number_of_customer + 1) * sizeof(customer_info));
-    for (int customer = 1; customer <= number_of_customer; customer++) {
+    customer_info* customer_list = (customer_info*)malloc((counter_idx_of_customer + 1) * sizeof(customer_info));
+    for (int customer = 1; customer <= counter_idx_of_customer; customer++) {
         scanf("%d %d", &customer_list[customer].use_time, &customer_list[customer].cost);
     }
 
     int total_time_answer = 0;
 
-    int* counter_profit_answer = (int*)malloc((number_of_counter + 1) * sizeof(int));
+    int* counter_profit_answer = (int*)malloc((counter_idx_of_counter + 1) * sizeof(int));
 
     HeapType* pq = create();
     init(pq);
 
-    for (int customer = 1; customer <= number_of_counter; customer++) {
+    for (int customer = 1; customer <= counter_idx_of_counter; customer++) {
         counter_list[customer].end_time = customer_list[customer].use_time;
         push_min_heap(pq, counter_list[customer]);
 
@@ -98,8 +100,8 @@ int main() {
         total_time_answer = (total_time_answer > counter_list[customer].end_time) ? total_time_answer : counter_list[customer].end_time;
     }
 
-    for (int customer = number_of_counter + 1; customer <= number_of_customer; customer++) {
-        int counter = pop_min_heap(pq).number;
+    for (int customer = counter_idx_of_counter + 1; customer <= counter_idx_of_customer; customer++) {
+        int counter = pop_min_heap(pq).counter_idx;
         counter_list[counter].end_time += customer_list[customer].use_time;
         push_min_heap(pq, counter_list[counter]);
 
@@ -108,7 +110,7 @@ int main() {
     }
 
     printf("%d\n", total_time_answer);
-    for (int counter = 1; counter <= number_of_counter; counter++) {
+    for (int counter = 1; counter <= counter_idx_of_counter; counter++) {
         printf("%d\n", counter_profit_answer[counter]);
     }
 
